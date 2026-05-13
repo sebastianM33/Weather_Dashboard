@@ -1,0 +1,36 @@
+# Node.js / React / Vite
+node_modules/
+dist/
+dist-ssr/
+*.local
+.pnpm-store/
+pnpm-debug.log*
+
+# Python / FastAPI
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+env/
+.venv/
+pip-log.txt
+pip-delete-this-directory.txt
+pyrightconfig.json 
+
+# Variables de Entorno (¡Nunca subas tus claves API!)
+.env
+.env.*
+
+# Archivos del Sistema Operativo
+.DS_Store
+Thumbs.db
+
+# Editores de Código / IDEs
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+pyrightconfig.json
