@@ -28,12 +28,12 @@ def read_root():
 def get_weather(city: str):
     url = f"{BASE_URL}/current.json?key={API_KEY}&q={city}&aqi=no"
     response = requests.get(url)
-
+    #LO que hace esto es verificar si la peticion es exitosa
     if response.status_code != 200:
-        raise HTTPException(status_code=404, detail="City not found") #lo que hace es lanzar un error cuando la peticion no es exitosa
+        raise HTTPException(status_code=404, detail="City not found")
     data = response.json()
 
-    # Son los datos que se van a enviar al front-End
+    # Es un filtro para enviar solo los datos que necesito al front-End
     return {
         "country": data["location"]["country"],
         "city": data["location"]["name"],
