@@ -24,6 +24,18 @@ Es el servidor que procesa las solicitudes del usuario.
 
 Si deseas descargar y probar el proyecto en tu computadora, sigue estos pasos:
 
+## ⚙️ Configuración del Entorno Local
+
+Para correr este proyecto localmente, necesitas una clave gratuita de WeatherAPI.
+
+1. Clona este repositorio: `git clone <tu-url-del-repo>`
+2. Ve a [WeatherAPI](https://www.weatherapi.com/) y crea una cuenta gratuita para obtener tu API Key.
+3. En la carpeta `Back-End`, busca el archivo llamado `.env.example` y renómbralo a `.env` (o crea un archivo nuevo llamado `.env` basándote en la plantilla).
+4. Abre el archivo `.env` y reemplaza el valor con tu clave real:
+   ```plaintext
+   WEATHER_API_KEY=123456789abcdef...
+   ```
+
 ### Configurar el Back-End
 1. Abre una terminal y navega a la carpeta del Back-End:
    ```bash

@@ -20,6 +20,7 @@ pyrightconfig.json
 # Variables de Entorno (¡Nunca subas tus claves API!)
 .env
 .env.*
+!.env.example # EXCEPCIÓN: Sí queremos subir la plantilla al repo
 
 # Archivos del Sistema Operativo
 .DS_Store
