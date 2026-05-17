@@ -34,16 +34,18 @@ Para correr este proyecto localmente, necesitas una clave gratuita de WeatherAPI
 4. Abre el archivo `.env` y reemplaza el valor con tu clave real:
    ```plaintext
    WEATHER_API_KEY=123456789abcdef...
-   ```
+   ``` 
 
 ### Configurar el Back-End
 1. Abre una terminal y navega a la carpeta del Back-End:
    ```bash
    cd Back-End
    ```
-2. Activa el entorno virtual (En Windows):
+2. Crea el entorno virtual e instala las dependencias (En Windows):
    ```bash
+   python -m venv venv
    .\venv\Scripts\activate
+   pip install -r requirements.txt
    ```
 3. Ejecuta el servidor de desarrollo de FastAPI:
    ```bash
