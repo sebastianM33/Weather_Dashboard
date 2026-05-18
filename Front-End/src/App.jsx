@@ -20,8 +20,8 @@ export default function App() {
     setError(null);
     try {
       const [resActual, resPronostico] = await Promise.all([
-        axios.get(`http://127.0.0.1:8000/weather/current/${ciudadBuscar}`),
-        axios.get(`http://127.0.0.1:8000/weather/forecast/${ciudadBuscar}`),
+        axios.get(`${import.meta.env.VITE_API_URL}/weather/current/${ciudadBuscar}`),
+        axios.get(`${import.meta.env.VITE_API_URL}/weather/forecast/${ciudadBuscar}`),
       ]);
 
       setClimaActual(resActual.data);

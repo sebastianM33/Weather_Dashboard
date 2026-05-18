@@ -30,6 +30,10 @@ Para correr este proyecto, primero necesitas una clave gratuita de WeatherAPI.
    ```plaintext
    WEATHER_API_KEY=tu_clave_secreta_aqui
    ```
+4. En la carpeta `Front-End`, busca el archivo `.env.example`, renómbralo a `.env`. Este archivo conecta tu frontend con tu backend local y debe contener:
+   ```plaintext
+   VITE_API_URL=http://127.0.0.1:8000
+   ```
 
 A partir de aquí, tienes **dos formas** de levantar el proyecto:
 
