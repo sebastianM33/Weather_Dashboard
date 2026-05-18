@@ -2,6 +2,9 @@
 
 Una aplicación web interactiva y moderna para consultar el clima en diferentes ciudades. Construida con una arquitectura de **Front-End** y **Back-End** separados, y completamente dockerizada.
 
+- **🌐 Live Demo (Front-End)**: [https://weather-dashboard-eight-topaz.vercel.app/](https://weather-dashboard-eight-topaz.vercel.app/)
+- **⚙️ API Base URL (Back-End)**: [https://weather-dashboard-oxlo.onrender.com](https://weather-dashboard-oxlo.onrender.com)
+
 Este proyecto sirve para establecer una base arquitectónica sólida, experimentar con la conexión entre **React** y **FastAPI**, y aplicar las mejores prácticas de desarrollo y despliegue.
 
 ## 📁 Estructura del Proyecto
