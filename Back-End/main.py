@@ -23,8 +23,7 @@ app.add_middleware(
         "*"
     ],  # Permite peticiones desde cualquier origen (ej. tu frontend en localhost:5173)
     allow_credentials=True,
-    allow_methods=["*"],  # Permite todos los métodos (GET, POST, etc.)
-    allow_headers=["*"],  # Permite todos los encabezados
+    allow_methods=["*"],  
 )
 
 import os

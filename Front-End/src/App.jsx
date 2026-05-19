@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useEffect } from "react";
 import axios from "axios";
 import { Cloud, AlertCircle, Loader2, MapPin, RefreshCw } from "lucide-react";
 import Buscador from "./components/Buscador";
@@ -8,6 +9,8 @@ import PronosticoDiario from "./components/PronosticoDiario";
 import MapaClima from './components/MapaClima'
 import MapaSelector from './components/MapaSelector';
 
+
+
 export default function App() {
   const [climaActual, setClimaActual] = useState(null);
   const [pronostico, setPronostico] = useState(null);
@@ -15,13 +18,31 @@ export default function App() {
   const [error, setError] = useState(null);
   const [mostrarModalMapa, setMostrarModalMapa] = useState(false);
 
-  const consultarClima = async (ciudadBuscar) => {
+
+  //Esta funcion obtiene la ubicacion del usuario y muestra el clima en tiempo real
+  useEffect(() => { 
+    if ("geolocation" in navigator) {   //Se comprueba si el navegador tiene geolocalizacion
+      navigator.geolocation.getCurrentPosition((position) => {
+        const lat = position.coords.latitude;
+        const lon = position.coords.longitude; 
+        consultarClima(`${lat},${lon}`);
+      },
+      (error) => {
+      console.error("Error al obtener la ubicación:", error);
+      }
+    );
+  } 
+  }, []); //El corchete de cierre es para que se ejecute solo una vez al cargar la página
+
+
+  const consultarClima = async (ciudad = ciudadBuscar) => { 
     setLoading(true);
     setError(null);
     try {
+      const BaseURL = import.meta.env.VITE_API_URL; //Se creo una constante para almacenar la URL base
       const [resActual, resPronostico] = await Promise.all([
-        axios.get(`${import.meta.env.VITE_API_URL}/weather/current/${ciudadBuscar}`),
-        axios.get(`${import.meta.env.VITE_API_URL}/weather/forecast/${ciudadBuscar}`),
+        axios.get(`${BaseURL}/weather/current/${ciudad}`),
+        axios.get(`${BaseURL}/weather/forecast/${ciudad}`),
       ]);
 
       setClimaActual(resActual.data);
