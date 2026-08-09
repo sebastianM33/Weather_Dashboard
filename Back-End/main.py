@@ -98,7 +98,11 @@ def limpiar_texto_clima(texto: str) -> str:
         "Lluvia ligera irregular": "Llovizna aislada",
         "Lluvia Ligera Irregular": "Llovizna Aislada",
         "Nieve irregular en las cercanías": "Posible nieve aislada",
-        "Nieve Irregular En Las Cercanías": "Posible Nieve Aislada"
+        "Nieve Irregular En Las Cercanías": "Posible Nieve Aislada",
+        "Chubasco ligero": "Llovizna",
+        "Chubascos ligeros": "Lloviznas",
+        "Chubasco": "Lluvia breve",
+        "Chubascos": "Lluvias breves"
     }
     
     for original, nuevo in reemplazos.items():
