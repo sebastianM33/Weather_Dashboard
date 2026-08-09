@@ -27,7 +27,7 @@ export default function MapaClima({ lat, lon, nombreCiudad, onSeleccionarUbicaci
   const posicion = [lat, lon]
 
   return (
-    <div className="bg-slate-900/40 border border-slate-800/80 rounded-3xl p-4 backdrop-blur-xl h-[300px] w-full relative z-0 overflow-hidden cursor-crosshair">
+    <div className="bg-fondo-tarjeta border border-borde-sutil rounded-3xl p-4 backdrop-blur-xl h-[300px] w-full relative z-0 overflow-hidden cursor-crosshair shadow-sombra">
       <MapContainer 
         center={posicion} 
         zoom={12} 
@@ -36,7 +36,7 @@ export default function MapaClima({ lat, lon, nombreCiudad, onSeleccionarUbicaci
       >
         <TileLayer
           attribution='&copy; <a href="https://carto.com/attributions">CARTO</a>'
-          url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+          url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
         />
         
         <Marker position={posicion}>

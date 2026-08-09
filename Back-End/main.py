@@ -23,7 +23,8 @@ app.add_middleware(
         "*"
     ],  # Permite peticiones desde cualquier origen (ej. tu frontend en localhost:5173)
     allow_credentials=True,
-    allow_methods=["*"],  
+    allow_methods=["*"],  # Permite todos los métodos (GET, POST, etc.)
+    allow_headers=["*"],  # Permite todos los encabezados
 )
 
 import os
@@ -36,11 +37,104 @@ load_dotenv()  # Carga las variables de entorno desde el archivo .env
 API_KEY = os.getenv("WEATHER_API_KEY")
 BASE_URL = "http://api.weatherapi.com/v1/forecast.json"
 
+GEOAPIFY_KEY = os.getenv("WEATHER_API_KEY2")
+BASE_URL2 = f"https://api.geoapify.com/v1/geocode/?text=Mosco&apiKey={GEOAPIFY_KEY}"
+
+
+
+@app.get("/weather/reverse/{lat}/{lon}")
+def obtener_ciudad_por_coordenadas(lat: float, lon: float):
+    GEOAPIFY_KEY = os.getenv("WEATHER_API_KEY2") 
+    
+    url = f"https://api.geoapify.com/v1/geocode/reverse?lat={lat}&lon={lon}&lang=es&apiKey={GEOAPIFY_KEY}"
+    
+    respuesta = requests.get(url)
+    datos = respuesta.json()
+    
+    if "features" in datos and len(datos["features"]) > 0:
+        props = datos["features"][0]["properties"]
+        
+        # 🧠 FILTRO INTELIGENTE (Estrategia de Fallback)
+        # Python evaluará uno por uno. El primero que tenga datos, se guarda.
+        ciudad_base = (
+            props.get("city") or 
+            props.get("town") or 
+            props.get("municipality") or 
+            props.get("village") or 
+            props.get("county") or 
+            "Ubicación desconocida"
+        )
+        
+        region = props.get("state", "")
+        pais = props.get("country", "")
+        
+        # Construimos un string más granular para que la búsqueda por texto sea más exacta
+        # Ej: "Pereira, Risaralda, Colombia"
+        partes = [ciudad_base]
+        if region and region != ciudad_base:
+            partes.append(region)
+        if pais:
+            partes.append(pais)
+            
+        ciudad_limpia = ", ".join(partes)
+        
+        return {
+            "ciudad": ciudad_limpia,
+            "pais": pais
+        }
+        
+        
+    return {"ciudad": "Ubicación desconocida", "pais": ""}
+
+def limpiar_texto_clima(texto: str) -> str:
+    if not texto:
+        return texto
+    # WeatherAPI tiene traducciones muy literales al español que suenan robóticas
+    reemplazos = {
+        "Lluvia Irregular En Las Cercanías": "Posible Lluvia Aislada",
+        "Lluvia irregular en las cercanías": "Posible lluvia aislada",
+        "Lluvia irregular": "Lluvia aislada",
+        "Lluvia Irregular": "Lluvia Aislada",
+        "Lluvia ligera irregular": "Llovizna aislada",
+        "Lluvia Ligera Irregular": "Llovizna Aislada",
+        "Nieve irregular en las cercanías": "Posible nieve aislada",
+        "Nieve Irregular En Las Cercanías": "Posible Nieve Aislada"
+    }
+    
+    for original, nuevo in reemplazos.items():
+        texto = texto.replace(original, nuevo)
+        
+        
+    return texto
+
+def obtener_coordenadas_por_texto(texto: str) -> str:
+    # Si ya parece ser coordenadas (ej. "4.81,-75.69"), lo devolvemos tal cual
+    if "," in texto and any(c.isdigit() for c in texto):
+        if texto[0].isdigit() or texto[0] == '-':
+            return texto
+
+    # Si es texto, usamos Geoapify para obtener la latitud y longitud exacta del centro de la ciudad
+    GEOAPIFY_KEY = os.getenv("WEATHER_API_KEY2")
+    url = f"https://api.geoapify.com/v1/geocode/search?text={texto}&lang=es&limit=1&apiKey={GEOAPIFY_KEY}"
+    
+    try:
+        respuesta = requests.get(url)
+        datos = respuesta.json()
+        if "features" in datos and len(datos["features"]) > 0:
+            lat = datos["features"][0]["properties"]["lat"]
+            lon = datos["features"][0]["properties"]["lon"]
+            return f"{lat},{lon}"
+    except:
+        pass
+    
+    # Si algo falla, devolvemos el texto original para que WeatherAPI lo intente
+    return texto
 
 @app.get("/weather/current/{ciudad}")
 def obtener_clima_actual(ciudad: str):
     url = BASE_URL
-    parametros = {"key": API_KEY, "q": ciudad, "lang": "es"}
+    ciudad_query = obtener_coordenadas_por_texto(ciudad)
+    parametros = {"key": API_KEY, "q": ciudad_query, "lang": "es"}
 
     try:
         respuesta = requests.get(url, params=parametros)
@@ -58,7 +152,7 @@ def obtener_clima_actual(ciudad: str):
             "ciudad": ubicacion["name"],
             "region": ubicacion["region"],
             "temperatura_celsius": actual["temp_c"],
-            "estado": actual["condition"]["text"],
+            "estado": limpiar_texto_clima(actual["condition"]["text"]),
             "icono": actual["condition"]["icon"],
             "porcentaje_humedad": actual["humidity"],
             "viento_kph": actual["wind_kph"],
@@ -76,7 +170,8 @@ def obtener_clima_actual(ciudad: str):
 @app.get("/weather/forecast/{ciudad}")
 def obtener_pronostico_clima(ciudad: str):
     url = BASE_URL
-    parametros = {"key": API_KEY, "q": ciudad, "days": 3, "lang": "es"}
+    ciudad_query = obtener_coordenadas_por_texto(ciudad)
+    parametros = {"key": API_KEY, "q": ciudad_query, "days": 3, "lang": "es"}
 
     try:
         respuesta = requests.get(url, params=parametros)
@@ -104,7 +199,7 @@ def obtener_pronostico_clima(ciudad: str):
                     {
                         "hora": hora_str,
                         "temperatura": hora["temp_c"],
-                        "condicion": hora["condition"]["text"],
+                        "condicion": limpiar_texto_clima(hora["condition"]["text"]),
                         "icono": hora["condition"]["icon"],
                         "codigo": hora["condition"]["code"],
                         "es_dia": hora["is_day"],
@@ -119,7 +214,7 @@ def obtener_pronostico_clima(ciudad: str):
                     "fecha": dia["date"],
                     "temp_max": dia["day"]["maxtemp_c"],
                     "temp_min": dia["day"]["mintemp_c"],
-                    "condicion": dia["day"]["condition"]["text"],
+                    "condicion": limpiar_texto_clima(dia["day"]["condition"]["text"]),
                     "icono": dia["day"]["condition"]["icon"],
                     "codigo": dia["day"]["condition"]["code"],
                     "es_dia": 1,

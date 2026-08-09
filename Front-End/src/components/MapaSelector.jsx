@@ -21,15 +21,15 @@ export default function MapaSelector({ onCerrar, onSeleccionarUbicacion }) {
   const centroInicial = [4.5709, -74.2973];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-in fade-in">
-      <div className="bg-slate-900 rounded-3xl w-full max-w-3xl overflow-hidden border border-slate-700 shadow-2xl relative">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-texto-primario/40 backdrop-blur-sm p-4 animate-in fade-in">
+      <div className="bg-fondo-tarjeta rounded-3xl w-full max-w-3xl overflow-hidden border border-borde-sutil shadow-sombra-hover relative">
         
         {/* Cabecera del Modal */}
-        <div className="p-4 bg-slate-950 flex justify-between items-center border-b border-slate-800">
-          <h3 className="text-white font-bold">Haz clic en cualquier lugar del mapa</h3>
+        <div className="p-4 bg-fondo-columna flex justify-between items-center border-b border-borde-sutil">
+          <h3 className="text-texto-primario font-bold">Haz clic en cualquier lugar del mapa</h3>
           <button 
             onClick={onCerrar}
-            className="text-slate-400 hover:text-white bg-slate-800 hover:bg-red-500 rounded-full w-8 h-8 flex items-center justify-center transition-colors"
+            className="text-texto-secundario hover:text-acento-texto bg-borde-sutil hover:bg-peligro rounded-full w-8 h-8 flex items-center justify-center transition-colors"
           >
             ✕
           </button>
@@ -40,7 +40,7 @@ export default function MapaSelector({ onCerrar, onSeleccionarUbicacion }) {
           <MapContainer center={centroInicial} zoom={5} className="h-full w-full z-0">
             <TileLayer
               attribution='&copy; OpenStreetMap contributors'
-              url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+              url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
             />
             <ClickEnMapa alSeleccionar={onSeleccionarUbicacion} />
           </MapContainer>

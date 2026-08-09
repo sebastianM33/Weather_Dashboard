@@ -13,10 +13,10 @@ import IconoClima from './IconoClima'
 const CustomTooltip = ({ active, payload }) => {
   if (active && payload && payload.length) {
     return (
-      <div className="bg-[#1c242f] border border-white/5 p-3 rounded-xl shadow-2xl text-left">
-        <p className="text-slate-400 text-[10px] font-bold uppercase tracking-wider">Hora: {payload[0].payload.hora}</p>
-        <p className="text-white text-lg font-extrabold mt-1">{payload[0].value}°C</p>
-        <p className="text-[#00e5ff] text-xs mt-0.5 capitalize font-medium">{payload[0].payload.condicion}</p>
+      <div className="bg-fondo-cuerpo border border-borde-sutil p-3 rounded-xl shadow-sombra text-left">
+        <p className="text-texto-secundario text-[10px] font-bold uppercase tracking-wider">Hora: {payload[0].payload.hora}</p>
+        <p className="text-texto-primario text-lg font-extrabold mt-1">{payload[0].value}°C</p>
+        <p className="text-acento text-xs mt-0.5 capitalize font-medium">{payload[0].payload.condicion}</p>
       </div>
     )
   }
@@ -37,16 +37,16 @@ export default function PronosticoHoras({ horas }) {
   }))
 
   return (
-    <div className="w-full max-w-5xl mx-auto bg-[#151b23] border border-slate-800/60 rounded-[2rem] p-8 md:p-10 shadow-2xl transition-all duration-500 mb-8">
+    <div className="w-full max-w-5xl mx-auto bg-fondo-tarjeta border border-borde-sutil rounded-[2rem] p-8 md:p-10 shadow-sombra transition-all duration-500 mb-8 hover:shadow-sombra-hover">
       
       {/* Título de Sección */}
-      <div className="flex items-center gap-3 mb-8 pb-5 border-b border-white/5">
-        <div className="bg-[#00e5ff]/10 text-[#00e5ff] p-2.5 rounded-xl border border-[#00e5ff]/20">
+      <div className="flex items-center gap-3 mb-8 pb-5 border-b border-borde-sutil">
+        <div className="bg-acento-bg text-acento p-2.5 rounded-xl border border-acento/20">
           <Clock className="w-5 h-5" />
         </div>
         <div>
-          <h3 className="text-xl md:text-2xl font-bold text-white tracking-wide text-left">Pronóstico por Horas</h3>
-          <p className="text-slate-400 text-xs md:text-sm text-left mt-0.5">Variación de la temperatura durante el día de hoy</p>
+          <h3 className="text-xl md:text-2xl font-bold text-texto-primario tracking-wide text-left">Pronóstico por Horas</h3>
+          <p className="text-texto-secundario text-xs md:text-sm text-left mt-0.5">Variación de la temperatura durante el día de hoy</p>
         </div>
       </div>
 
@@ -59,21 +59,21 @@ export default function PronosticoHoras({ horas }) {
           >
             <defs>
               <linearGradient id="colorTemp" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#00e5ff" stopOpacity={0.4} />
-                <stop offset="95%" stopColor="#00e5ff" stopOpacity={0.0} />
+                <stop offset="5%" stopColor="#5c8d89" stopOpacity={0.4} />
+                <stop offset="95%" stopColor="#5c8d89" stopOpacity={0.0} />
               </linearGradient>
             </defs>
-            <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" opacity={0.3} vertical={false} />
+            <CartesianGrid strokeDasharray="3 3" stroke="#e5e2db" opacity={0.6} vertical={false} />
             <XAxis 
               dataKey="hora" 
-              stroke="#64748b" 
+              stroke="#797470" 
               fontSize={11} 
               tickLine={false} 
               axisLine={false}
               dy={10}
             />
             <YAxis 
-              stroke="#64748b" 
+              stroke="#797470" 
               fontSize={11} 
               tickLine={false} 
               axisLine={false}
@@ -83,7 +83,7 @@ export default function PronosticoHoras({ horas }) {
             <Area 
               type="monotone" 
               dataKey="temperatura" 
-              stroke="#00e5ff" 
+              stroke="#5c8d89" 
               strokeWidth={3}
               fillOpacity={1} 
               fill="url(#colorTemp)" 
@@ -93,19 +93,19 @@ export default function PronosticoHoras({ horas }) {
       </div>
 
       {/* Fila Scrollable de Horas */}
-      <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-thin scrollbar-track-[#151b23] scrollbar-thumb-slate-700 max-w-full">
+      <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-borde-sutil max-w-full">
         {horas.map((item, index) => (
           <div 
             key={index} 
-            className="flex-shrink-0 bg-[#1c242f] border border-white/5 hover:border-[#00e5ff]/30 hover:bg-[#1f2833] p-4 md:p-5 rounded-2xl flex flex-col items-center justify-center text-center w-28 md:w-32 shadow-md transition-all duration-300 group"
+            className="flex-shrink-0 bg-fondo-cuerpo border border-borde-sutil hover:border-acento hover:bg-fondo-tarjeta p-4 md:p-5 rounded-2xl flex flex-col items-center justify-center text-center w-28 md:w-32 shadow-sombra transition-all duration-300 group"
           >
-            <span className="text-slate-400 text-sm font-bold">{item.hora}</span>
+            <span className="text-texto-secundario text-sm font-bold">{item.hora}</span>
             <div className="my-2 group-hover:scale-110 transition-transform duration-300">
               <IconoClima codigo={item.codigo} es_dia={item.es_dia} className="w-14 h-14" />
             </div>
-            <span className="text-white text-lg font-bold">{Math.round(item.temperatura)}°C</span>
+            <span className="text-texto-primario text-lg font-bold">{Math.round(item.temperatura)}°C</span>
             <span 
-              className="text-xs text-[#00e5ff] truncate w-full capitalize mt-1 font-medium" 
+              className="text-xs text-acento truncate w-full capitalize mt-1 font-medium" 
               title={item.condicion}
             >
               {item.condicion}

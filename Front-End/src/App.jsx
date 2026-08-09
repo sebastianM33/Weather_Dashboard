@@ -33,16 +33,24 @@ export default function App() {
     );
   } 
   }, []); //El corchete de cierre es para que se ejecute solo una vez al cargar la página
-
-
-  const consultarClima = async (ciudad = ciudadBuscar) => { 
+  
+  const manejarClicEnMapa = async (lat, lon) => {
+    try {
+      // Esto es más preciso y nos ahorra una petición a Geoapify
+      consultarClima(`${lat},${lon}`);
+    } catch (error) {
+      console.error("Error al procesar el clic en el mapa:", error);
+    }
+  };
+  
+  const consultarClima = async (ciudadBuscar) => { 
     setLoading(true);
     setError(null);
     try {
       const BaseURL = import.meta.env.VITE_API_URL; //Se creo una constante para almacenar la URL base
       const [resActual, resPronostico] = await Promise.all([
-        axios.get(`${BaseURL}/weather/current/${ciudad}`),
-        axios.get(`${BaseURL}/weather/forecast/${ciudad}`),
+        axios.get(`${BaseURL}/weather/current/${ciudadBuscar}`),
+        axios.get(`${BaseURL}/weather/forecast/${ciudadBuscar}`),
       ]);
 
       setClimaActual(resActual.data);
@@ -67,24 +75,24 @@ export default function App() {
   };
 
   return (
-    <div className="relative min-h-screen bg-slate-950 text-slate-100 flex flex-col items-center p-4 md:p-8 overflow-hidden font-sans">
-      {/* Luces decorativas de fondo (Glow effect premium) */}
-      <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-indigo-500/10 rounded-full blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-blue-500/10 rounded-full blur-[120px] pointer-events-none" />
+    <div className="relative min-h-screen bg-fondo-cuerpo text-texto-primario flex flex-col items-center p-4 md:p-8 overflow-hidden font-sans">
+      {/* Luces decorativas sutiles */}
+      <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-acento/5 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-acento/5 rounded-full blur-[120px] pointer-events-none" />
 
       {/* Cabecera / Logo */}
       <header className="z-10 w-full max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between mb-10 mt-4 gap-6">
         
         {/* Izquierda: Logo y Títulos */}
         <div className="flex items-center gap-4">
-          <div className="bg-[#0b1419] p-3 rounded-2xl shadow-lg border border-white/5">
-            <Cloud className="w-8 h-8 text-[#00e5ff]" strokeWidth={2} />
+          <div className="bg-fondo-tarjeta p-3 rounded-2xl shadow-sombra border border-borde-sutil">
+            <Cloud className="w-8 h-8 text-acento" strokeWidth={2} />
           </div>
           <div className="flex flex-col text-left">
-            <h1 className="text-2xl md:text-3xl font-bold text-white tracking-tight">
+            <h1 className="text-2xl md:text-3xl font-extrabold text-texto-primario tracking-tight">
               Weather Dashboard
             </h1>
-            <p className="text-slate-400 text-sm">
+            <p className="text-texto-secundario text-sm font-medium">
               Pronóstico del tiempo en tiempo real
             </p>
           </div>
@@ -96,14 +104,14 @@ export default function App() {
           
           <button 
               onClick={() => setMostrarModalMapa(true)}
-            className="bg-[#00e5ff] text-slate-900 p-3.5 rounded-2xl hover:bg-[#33ebff] transition-all flex-shrink-0 shadow-lg shadow-cyan-500/20 active:scale-95"
+            className="bg-acento text-acento-texto p-3.5 rounded-2xl hover:bg-acento-hover transition-all flex-shrink-0 shadow-sombra active:scale-95"
           >
             <MapPin className="w-5 h-5" strokeWidth={2.5} />
           </button>
           
           <button 
             onClick={() => window.location.reload()} 
-            className="bg-[#151b23] border border-white/5 text-slate-400 p-3.5 rounded-2xl hover:bg-[#1f2833] transition-all flex-shrink-0 shadow-lg active:scale-95"
+            className="bg-fondo-tarjeta border border-borde-sutil text-texto-secundario p-3.5 rounded-2xl hover:bg-fondo-cuerpo hover:text-texto-primario transition-all flex-shrink-0 shadow-sombra active:scale-95"
           >
             <RefreshCw className="w-5 h-5" />
           </button>
@@ -115,13 +123,13 @@ export default function App() {
 
         {/* Alerta de Error */}
         {error && (
-          <div className="w-full bg-red-500/10 border border-red-500/20 backdrop-blur-md rounded-2xl p-4 flex items-start gap-3 shadow-xl max-w-4xl mx-auto mb-6 transition-all duration-300 animate-in fade-in">
-            <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
+          <div className="w-full bg-peligro/10 border border-peligro/20 backdrop-blur-md rounded-2xl p-4 flex items-start gap-3 shadow-sombra max-w-4xl mx-auto mb-6 transition-all duration-300 animate-in fade-in">
+            <AlertCircle className="w-5 h-5 text-peligro flex-shrink-0 mt-0.5" />
             <div>
-              <h4 className="text-red-400 font-bold text-sm">
+              <h4 className="text-peligro font-bold text-sm">
                 Error de Consulta
               </h4>
-              <p className="text-red-200/80 text-xs mt-1 leading-relaxed">
+              <p className="text-peligro/80 text-xs mt-1 leading-relaxed">
                 {error}
               </p>
             </div>
@@ -131,11 +139,11 @@ export default function App() {
         {/* Estado Inicial (Vacío) */}
         {!climaActual && !loading && !error && (
           <div className="w-full flex flex-col items-center justify-center py-16 px-4 text-center animate-in fade-in duration-700">
-            <div className="bg-slate-900/40 p-6 rounded-full border border-slate-800/50 mb-6 shadow-2xl">
-              <MapPin className="w-12 h-12 text-slate-500/50" />
+            <div className="bg-fondo-tarjeta p-6 rounded-full border border-borde-sutil mb-6 shadow-sombra">
+              <MapPin className="w-12 h-12 text-acento/50" />
             </div>
-            <h3 className="text-xl md:text-2xl font-bold text-slate-300 mb-2">Descubre el Clima Global</h3>
-            <p className="text-slate-500 max-w-md mx-auto text-sm md:text-base">
+            <h3 className="text-xl md:text-2xl font-bold text-texto-primario mb-2">Descubre el Clima Global</h3>
+            <p className="text-texto-secundario max-w-md mx-auto text-sm md:text-base">
               Ingresa el nombre de una ciudad o país en el buscador de arriba para obtener información detallada del clima actual y un pronóstico extendido.
             </p>
           </div>
@@ -144,8 +152,8 @@ export default function App() {
         {/* Estado de carga (Spinner) */}
         {loading && !climaActual && (
           <div className="w-full flex flex-col items-center justify-center py-20 gap-4">
-            <Loader2 className="w-12 h-12 text-indigo-500 animate-spin" />
-            <p className="text-slate-400 text-sm font-medium animate-pulse">
+            <Loader2 className="w-12 h-12 text-acento animate-spin" />
+            <p className="text-texto-secundario text-sm font-medium animate-pulse">
               Obteniendo información meteorológica...
             </p>
           </div>
@@ -160,7 +168,7 @@ export default function App() {
                 lat={climaActual.latitud} 
                 lon={climaActual.longitud} 
                 nombreCiudad={climaActual.ciudad} 
-                onSeleccionarUbicacion={(lat, lng) => consultarClima(`${lat},${lng}`)}
+                onSeleccionarUbicacion={manejarClicEnMapa}
               />
             </div>
             {pronostico && (
@@ -177,8 +185,7 @@ export default function App() {
         )}
       </main>
 
-      {/* Footer */}
-      <footer className="z-10 mt-auto pt-10 text-center text-slate-500 text-[10px] tracking-widest font-semibold uppercase">
+      <footer className="z-10 mt-auto pt-10 text-center text-texto-secundario text-[10px] tracking-widest font-semibold uppercase">
         © 2026 Weather Dashboard · Conectado con FastAPI & WeatherAPI
       </footer>
 
@@ -188,8 +195,7 @@ export default function App() {
           onCerrar={() => setMostrarModalMapa(false)}
           onSeleccionarUbicacion={(lat, lng) => {
             setMostrarModalMapa(false);
-            const coordenadas = `${lat},${lng}`;
-            consultarClima(coordenadas);
+            manejarClicEnMapa(lat, lng);
           }}
         />
       )}
